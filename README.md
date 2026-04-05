@@ -30,7 +30,7 @@ This tool requires **Linux** (Kali Linux recommended) for low-level packet manip
 1. Clone this repository:
 
    ```bash
-   git clone [https://github.com/USERNAME_GITHUB_ANDA/MITM-Tactical-Suite.git](https://github.com/USERNAME_GITHUB_ANDA/MITM-Tactical-Suite.git)
+   git clone https://github.com/HaykalAzriel/MITM-Tactical-Suite.git
    cd MITM-Tactical-Suite
    ```
 
