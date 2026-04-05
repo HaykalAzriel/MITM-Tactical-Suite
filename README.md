@@ -4,7 +4,7 @@
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 ![Platform](https://img.shields.io/badge/Platform-Linux-lightgrey.svg)
 
-**MITM Tactical Suite** is an advanced, modular toolkit designed for executing Man-in-the-Middle (MITM) simulations. It combines Layer 2 routing manipulation (ARP Cache Poisoning) with Layer 7 payload interception (DNS Hijacking).
+**MITM Tactical Suite** is an advanced, modular toolkit designed for executing Man-in-the-Middle (MITM) simulations. It combines Layer 2 routing manipulation (ARP Cache Poisoning) with Layer 7 payload interception (DNS Hijacking). 
 
 This suite is explicitly built to help cybersecurity professionals, penetration testers, and network administrators evaluate local network resilience against credential harvesting and redirection attacks.
 
@@ -12,11 +12,11 @@ This suite is explicitly built to help cybersecurity professionals, penetration 
 
 ## 🌟 Features
 
-- **Modular Architecture:** Run ARP poisoning and DNS spoofing independently or simultaneously.
-- **Automated OS Configuration:** Automatically enables/disables Linux kernel IP forwarding during ARP execution.
-- **Dynamic CLI Interface:** Built with `argparse` for seamless, hacker-friendly command-line execution.
-- **Layer 7 DNS Hijacking:** Intercepts UDP/53 queries and injects rogue A-records to redirect targets.
-- **Safe Auto-Restoration:** Safely restores the victim's ARP table upon exiting (CTRL+C) to prevent network Denial of Service (DoS).
+* **Modular Architecture:** Run ARP poisoning and DNS spoofing independently or simultaneously.
+* **Automated OS Configuration:** Automatically enables/disables Linux kernel IP forwarding during ARP execution.
+* **Dynamic CLI Interface:** Built with `argparse` for seamless, hacker-friendly command-line execution.
+* **Layer 7 DNS Hijacking:** Intercepts UDP/53 queries and injects rogue A-records to redirect targets.
+* **Safe Auto-Restoration:** Safely restores the victim's ARP table upon exiting (CTRL+C) to prevent network Denial of Service (DoS).
 
 ## 🗂️ Modules Overview
 
@@ -46,37 +46,29 @@ To execute a full MITM redirection attack, you need to run both modules in tande
 Make sure you have `root` privileges (`sudo`), as Scapy requires low-level network socket access.
 
 ### Step 1: Establish the MITM Position (Terminal 1)
-
 First, place your machine between the victim and the gateway using the ARP module.
-
 ```bash
 chmod +x arppoison.py
 sudo ./arppoison.py -t <VICTIM_IP> -g <GATEWAY_IP>
 ```
-
-_Example:_ `sudo ./arppoison.py -t 192.168.1.10 -g 192.168.1.1`
+*Example:* `sudo ./arppoison.py -t 192.168.1.10 -g 192.168.1.1`
 
 ### Step 2: Execute DNS Hijacking (Terminal 2)
-
 While the ARP script is running, execute the DNS spoofer to redirect a specific domain to your rogue server (e.g., an Apache server hosting a fake login page).
-
 ```bash
 chmod +x dns_spoofer.py
 sudo ./dns_spoofer.py -d <TARGET_DOMAIN> -r <ROGUE_IP>
 ```
+*Example:* `sudo ./dns_spoofer.py -d facebook.com -r 192.168.1.50`
 
-_Example:_ `sudo ./dns_spoofer.py -d facebook.com -r 192.168.1.50`
-
-_(When the victim attempts to browse `facebook.com`, they will be transparently redirected to `192.168.1.50`)_
+*(When the victim attempts to browse `facebook.com`, they will be transparently redirected to `192.168.1.50`)*
 
 ## 🛡️ Mitigation
 
 To protect networks from this suite, administrators should implement:
-
-- **Dynamic ARP Inspection (DAI)** and DHCP Snooping on enterprise switches.
-- **DNSSEC (Domain Name System Security Extensions)** to validate DNS responses cryptographically.
-- **Static ARP entries** for critical infrastructure components.
+* **Dynamic ARP Inspection (DAI)** and DHCP Snooping on enterprise switches.
+* **DNSSEC (Domain Name System Security Extensions)** to validate DNS responses cryptographically.
+* **Static ARP entries** for critical infrastructure components.
 
 ---
-
-_Developed by **Haykal Azriel Priatama** as part of Telkom University._
+*Developed by **Haykal Azriel Priatama** as part of Telkom University.*
